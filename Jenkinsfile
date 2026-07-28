@@ -6,7 +6,7 @@ pipeline {
         IP=credentials('yandex-apps-ip')
 
         IMAGE_NAME='siberiacancode/juniors-bootcamp-backend-v1'
-        IMAGE_VERSION='v1'
+        IMAGE_VERSION='latest'
         PORT='3101'
         
         JWT_SECRET=credentials('jwt-secret')
