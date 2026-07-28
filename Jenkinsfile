@@ -5,9 +5,9 @@ pipeline {
         DATABASE_URL=credentials('database-url')
         IP=credentials('yandex-apps-ip')
 
-        IMAGE_NAME='siberiacancode/juniors-bootcamp-backend'
-        IMAGE_VERSION='latest'
-        PORT='3010'
+        IMAGE_NAME='siberiacancode/juniors-bootcamp-backend-v1'
+        IMAGE_VERSION='v1'
+        PORT='3101'
         
         JWT_SECRET=credentials('jwt-secret')
 
@@ -51,9 +51,9 @@ pipeline {
                         
                     sh 'ssh -o "StrictHostKeyChecking=no" $SSH_USERNAME@$IP \
                         "sudo docker login ghcr.io -u $GITHUB_TOKEN_USR --password $GITHUB_TOKEN_PSW &&\
-                        sudo docker rm -f juniors-bootcamp-backend &&\
-                        sudo docker pull ghcr.io/siberiacancode/juniors-bootcamp-backend:latest &&\
-                        sudo docker run --restart=always --name juniors-bootcamp-backend -d -p $PORT:$PORT -e PORT=$PORT -e SERVER_URL=$SERVER_URL -e DATABASE_URL=$DATABASE_URL -e SQL_DATABASE_URL=$SQL_DATABASE_URL -e JWT_SECRET=$JWT_SECRET --network juniors-bootcamp ghcr.io/siberiacancode/juniors-bootcamp-backend:latest"'
+                        sudo docker rm -f juniors-bootcamp-backend-v1 || true &&\
+                        sudo docker pull ghcr.io/siberiacancode/juniors-bootcamp-backend-v1 &&\
+                        sudo docker run --restart=always --name juniors-bootcamp-backend-v1 -d -p $PORT:$PORT -e PORT=$PORT -e SERVER_URL=$SERVER_URL -e DATABASE_URL=$DATABASE_URL -e SQL_DATABASE_URL=$SQL_DATABASE_URL -e JWT_SECRET=$JWT_SECRET --network juniors-bootcamp ghcr.io/siberiacancode/juniors-bootcamp-backend-v1"'
                 }
             }
         }

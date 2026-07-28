@@ -1,71 +1,41 @@
 networks:
   juniors-bootcamp:
     driver: bridge
-    external: false
 
 volumes:
-  juniors-bootcamp-data:
-    driver: local
-  juniors-bootcamp-prometheus-data:
-    driver: local
-  juniors-bootcamp-grafana-data:
+  juniors-bootcamp-v1-data:
     driver: local
 
 services:
-  juniors-bootcamp-database:
+  juniors-bootcamp-v1-database:
     image: mongo:latest
     restart: always
-    container_name: juniors-bootcamp-database
+    container_name: juniors-bootcamp-v1-database
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${DATABASE_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_PASSWORD}
     ports:
       - '${DATABASE_PORT}:27017'
     volumes:
-      - juniors-bootcamp-data:/data/db
+      - juniors-bootcamp-v1-data:/data/db
     networks:
       - juniors-bootcamp
 
-  juniors-bootcamp-service:
-    image: ghcr.io/siberiacancode/juniors-bootcamp-backend:latest
-    container_name: juniors-bootcamp-backend
+  juniors-bootcamp-v1-service:
+    build:
+      context: .
+      dockerfile: dockerfile
+    image: ghcr.io/siberiacancode/juniors-bootcamp-backend-v1
+    container_name: juniors-bootcamp-backend-v1
+    restart: always
     environment:
       - JWT_SECRET=${JWT_SECRET}
-      - PORT=3010
+      - PORT=3011
       - SERVER_URL=${SERVER_URL}
-      - DATABASE_URL=mongodb://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@juniors-bootcamp-database:27017/${DATABASE_NAME}
+      - DATABASE_URL=mongodb://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@juniors-bootcamp-v1-database:27017/${DATABASE_NAME}?authSource=admin
     ports:
-      - '3010:3010'
+      - '3011:3011'
     depends_on:
-      - juniors-bootcamp-database
-    networks:
-      - juniors-bootcamp
-
-  juniors-bootcamp-prometheus:
-    image: prom/prometheus:latest
-    container_name: juniors-bootcamp-prometheus
-    restart: always
-    ports:
-      - '9090:9090'
-    volumes:
-      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
-      - juniors-bootcamp-prometheus-data:/prometheus
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.path=/prometheus
-    networks:
-      - juniors-bootcamp
-
-  juniors-bootcamp-grafana:
-    image: grafana/grafana:latest
-    container_name: juniors-bootcamp-grafana
-    restart: always
-    ports:
-      - '3030:3000'
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_USERS_ALLOW_SIGN_UP=false
-    volumes:
-      - juniors-bootcamp-grafana-data:/var/lib/grafana
+      - juniors-bootcamp-v1-database
     networks:
       - juniors-bootcamp

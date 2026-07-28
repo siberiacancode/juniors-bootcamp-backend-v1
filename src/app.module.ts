@@ -35,7 +35,7 @@ import { withBaseUrl } from './utils/helpers';
       },
       resolvers: [{ use: QueryResolver, options: ['lang'] }, AcceptLanguageResolver]
     }),
-    MongooseModule.forRoot(process.env.DATABASE_URL, { dbName: 'juniors-bootcamp' }),
+    MongooseModule.forRoot(process.env.DATABASE_URL, { dbName: 'juniors-bootcamp-v1' }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: path.join(process.cwd(), 'src/schema.gql'),
